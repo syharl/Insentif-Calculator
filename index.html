@@ -4,131 +4,211 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kalkulator Insentif Kurir Plus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --red:#cc0000; --navy:#201150; --bg:#f3f2f8; --card:#fff; --text:#1a1a2e; --muted:#666; --line:#d9d7e6; }
+  :root {
+    --ink:#1b1b1b; --paper:#fff6dc; --yellow:#ffd93d; --pink:#ff9ec7; --mint:#8ff0c4; --lilac:#c8b6ff; --orange:#ff8a3d; --muted:#6b6455;
+    --head:'Baloo 2','Comic Sans MS','Chalkboard SE',system-ui,sans-serif;
+    --wobble:255px 18px 225px 18px / 18px 225px 18px 255px;
+  }
   * { box-sizing:border-box; }
-  body { margin:0; padding:0 0 24px; background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; }
-  .banner { background:var(--red); color:#fff; padding:22px 16px; text-align:center; }
-  .banner h1 { font-size:1.15rem; margin:0 0 4px; text-transform:uppercase; letter-spacing:.3px; }
-  .banner div { font-size:.85rem; opacity:.9; }
-  .wrap { max-width:480px; margin:0 auto; padding:14px 14px 0; }
-  .card { background:var(--card); border-radius:12px; margin-bottom:12px; border:1px solid var(--line); overflow:hidden; }
-  .card .hd { background:var(--navy); color:#fff; font-weight:700; font-size:.95rem; padding:10px 14px; }
-  .card .bd { padding:4px 14px 14px; }
-  label { display:block; font-size:.85rem; color:var(--muted); margin:10px 0 4px; }
-  input { width:100%; padding:10px; font-size:1rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); }
-  input:focus { outline:2px solid var(--navy); border-color:var(--navy); }
+  body {
+    margin:0; padding:0 0 28px; color:var(--ink); font-family:system-ui,sans-serif;
+    background-color:var(--paper);
+    background-image:radial-gradient(#e8d9a8 1.5px, transparent 1.5px);
+    background-size:18px 18px;
+  }
+
+  /* ===== banner ===== */
+  .banner { position:relative; text-align:center; padding:26px 16px 18px; overflow:hidden; }
+  .banner h1 {
+    font-family:var(--head); font-weight:800; font-size:1.6rem; line-height:1.1; margin:0 auto 6px; max-width:330px;
+    display:inline-block; background:var(--yellow); border:3px solid var(--ink); border-radius:var(--wobble);
+    padding:10px 18px 8px; box-shadow:5px 5px 0 var(--ink); transform:rotate(-2deg);
+  }
+  .banner .tag { font-family:var(--head); font-weight:700; font-size:1rem; margin-top:12px; }
+  .banner .tag u { text-decoration:none; background:linear-gradient(transparent 60%, var(--pink) 60%); }
+  .sticker {
+    position:absolute; right:10px; top:10px; width:74px; height:74px; border-radius:50%; background:var(--mint);
+    border:3px solid var(--ink); display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:var(--head); font-weight:800; font-size:.62rem; line-height:1.1; transform:rotate(14deg); box-shadow:3px 3px 0 var(--ink);
+  }
+  .fl { position:absolute; font-size:1.5rem; animation:bob 3.2s ease-in-out infinite; user-select:none; }
+  .f1 { left:10px; top:14px; } .f2 { left:26px; top:92px; animation-delay:-1s; font-size:1.2rem; }
+  .f3 { right:20px; top:96px; animation-delay:-2s; font-size:1.3rem; } .f4 { left:46%; top:2px; animation-delay:-.5s; font-size:1.1rem; }
+  @keyframes bob { 0%,100% { transform:translateY(0) rotate(-6deg); } 50% { transform:translateY(-7px) rotate(8deg); } }
+
+  .wrap { max-width:480px; margin:0 auto; padding:6px 14px 0; position:relative; }
+  .squig { display:block; width:150px; height:18px; margin:2px auto 8px; }
+  .doodle { display:block; }
+
+  /* ===== kartu ===== */
+  .card {
+    position:relative; background:#fff; border:3px solid var(--ink); border-radius:var(--wobble);
+    margin:26px 0 18px; padding:30px 14px 14px; box-shadow:6px 6px 0 var(--ink);
+  }
+  .card:nth-of-type(odd) { transform:rotate(-.5deg); } .card:nth-of-type(even) { transform:rotate(.5deg); }
+  .tab {
+    position:absolute; top:-18px; left:14px; font-family:var(--head); font-weight:800; font-size:1rem;
+    padding:3px 14px 1px; border:3px solid var(--ink); border-radius:999px; box-shadow:3px 3px 0 var(--ink); transform:rotate(-2deg);
+  }
+  .c-yellow .tab { background:var(--yellow); } .c-pink .tab { background:var(--pink); }
+  .c-mint .tab { background:var(--mint); } .c-lilac .tab { background:var(--lilac); }
+  .corner { position:absolute; right:10px; top:-14px; font-size:1.6rem; transform:rotate(12deg); }
+
+  label { display:block; font-size:.85rem; font-weight:700; color:var(--muted); margin:10px 0 4px; }
+  input {
+    width:100%; padding:10px; font-size:1rem; font-weight:700; color:var(--ink); background:#fffdf3;
+    border:2.5px solid var(--ink); border-radius:12px; font-family:inherit;
+  }
+  input::placeholder { color:#b9b29c; font-weight:500; opacity:1; }
+  input:focus { outline:none; background:#fff; box-shadow:3px 3px 0 var(--orange); }
   .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .big input { font-size:1.3rem; font-weight:bold; }
+  .big input { font-size:1.5rem; text-align:center; }
   .money { position:relative; }
-  .money span { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--navy); pointer-events:none; }
-  .money input { padding-left:40px; }
-  .line { display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:.95rem; }
-  .line span:first-child { color:var(--muted); }
-  .line b { text-align:right; color:var(--navy); }
-  .total { text-align:center; padding:14px 8px 4px; }
-  .total .lbl { color:var(--muted); font-size:.85rem; }
-  .total .num { font-size:2rem; font-weight:800; color:var(--red); }
-  .total .num.sm { font-size:1.5rem; color:var(--navy); }
-  .info { font-size:.8rem; color:var(--muted); margin-top:8px; }
-  .hero { background:var(--red); color:#fff; border-radius:12px; padding:18px 12px; text-align:center; margin:14px 0 6px; box-shadow:0 4px 12px rgba(204,0,0,.3); }
-  .hero .lbl { font-size:.95rem; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
-  .hero .num { font-size:2.6rem; font-weight:800; line-height:1.15; margin:4px 0; }
-  .hero .sub2 { font-size:.85rem; opacity:.92; }
-  .sect { font-size:.8rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.4px; margin:16px 0 2px; }
-  .line.hl b { font-size:1.1rem; color:var(--red); }
-  .line.hl span:first-child { color:var(--text); font-weight:600; }
-  input::placeholder { color:#a9a6bd; font-weight:400; opacity:1; }
-  .btn { display:block; width:100%; padding:14px; font-size:1.1rem; font-weight:800; color:#fff; background:var(--red); border:0; border-radius:12px; cursor:pointer; margin-bottom:12px; box-shadow:0 4px 12px rgba(204,0,0,.3); }
-  .btn:active { transform:scale(.98); }
-  .err { display:none; color:var(--red); font-size:.85rem; font-weight:600; text-align:center; margin:-4px 0 10px; }
+  .money span { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-weight:800; color:var(--orange); pointer-events:none; }
+  .money input { padding-left:38px; }
+  .info { font-size:.8rem; color:var(--muted); margin-top:8px; font-weight:600; }
+
+  /* ===== tombol ===== */
+  .btn {
+    display:block; width:100%; padding:16px 10px; font-family:var(--head); font-weight:800; font-size:1.35rem; color:var(--ink);
+    background:var(--orange); border:3px solid var(--ink); border-radius:var(--wobble); cursor:pointer; margin:6px 0 14px;
+    box-shadow:6px 6px 0 var(--ink); animation:wig 2.4s ease-in-out infinite;
+  }
+  .btn:active { transform:translate(5px,5px); box-shadow:1px 1px 0 var(--ink); animation:none; }
+  @keyframes wig { 0%,88%,100% { transform:rotate(0); } 91% { transform:rotate(-2deg); } 94% { transform:rotate(2deg); } 97% { transform:rotate(-1deg); } }
+  .err { display:none; background:#fff; border:3px dashed var(--ink); border-radius:14px; font-weight:800; text-align:center; padding:10px; margin:-4px 0 14px; transform:rotate(-1deg); }
+
+  /* ===== hasil ===== */
   #hasil { display:none; }
-  .credit { max-width:480px; margin:8px auto 0; padding:0 18px; text-align:center; color:#8a8a99; }
+  #hasil.show { display:block; animation:pop .45s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes pop { from { transform:scale(.85) rotate(-3deg); opacity:0; } to { transform:scale(1) rotate(.5deg); opacity:1; } }
+  .hero {
+    position:relative; background:var(--yellow); border:3px solid var(--ink); border-radius:22px; text-align:center;
+    padding:16px 10px 14px; margin:2px 0 12px; box-shadow:4px 4px 0 var(--ink); overflow:hidden;
+  }
+  .hero .lbl { font-family:var(--head); font-weight:800; font-size:.95rem; text-transform:uppercase; letter-spacing:.5px; }
+  .hero .num { font-family:var(--head); font-weight:800; font-size:2.7rem; line-height:1.1; margin:2px 0; word-break:break-word; }
+  .hero .sub2 { font-size:.82rem; font-weight:700; }
+  .hero .st { position:absolute; font-size:1.2rem; animation:bob 2.6s ease-in-out infinite; }
+  .hero .s1 { left:8px; top:6px; } .hero .s2 { right:10px; top:10px; animation-delay:-1s; } .hero .s3 { right:18px; bottom:8px; animation-delay:-2s; } .hero .s4 { left:16px; bottom:6px; animation-delay:-.6s; }
+  .bubble {
+    position:relative; background:#fff; border:3px solid var(--ink); border-radius:18px; padding:10px 12px; margin:0 0 14px 6px;
+    font-weight:800; font-size:.92rem; box-shadow:3px 3px 0 var(--ink);
+  }
+  .bubble::before { content:"🛵"; position:absolute; left:-4px; top:-18px; font-size:1.4rem; transform:scaleX(-1); }
+  .line { display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:2.5px dotted #cfc6a8; font-size:.95rem; }
+  .line span:first-child { color:var(--muted); font-weight:600; }
+  .line b { text-align:right; }
+  .line.hl { background:linear-gradient(90deg, transparent, #fff3a8 40%); border-radius:8px; padding-left:6px; padding-right:6px; }
+  .line.hl span:first-child { color:var(--ink); font-weight:800; }
+  .line.hl b { font-family:var(--head); font-size:1.15rem; color:#d6410f; }
+  .sect {
+    display:inline-block; font-family:var(--head); font-weight:800; font-size:.9rem; background:var(--mint); border:2.5px solid var(--ink);
+    border-radius:999px; padding:2px 12px 0; margin:18px 0 4px; transform:rotate(-1.5deg);
+  }
+  .total { text-align:center; margin:10px 0 4px; padding:10px 6px; border:3px solid var(--ink); border-radius:16px; background:var(--pink); box-shadow:3px 3px 0 var(--ink); }
+  .total.alt { background:var(--lilac); }
+  .total .lbl { font-size:.8rem; font-weight:800; }
+  .total .num { font-family:var(--head); font-weight:800; font-size:1.9rem; line-height:1.15; word-break:break-word; }
+  .total .num.sm { font-size:1.5rem; }
+
+  /* ===== footer ===== */
+  .credit { max-width:480px; margin:14px auto 0; padding:0 18px; text-align:center; color:#8a8a99; }
   .credit .by { font-size:.7rem; text-transform:uppercase; letter-spacing:.5px; opacity:.8; }
   .credit .name { font-size:1.05rem; font-weight:700; margin:2px 0 6px; color:#7a7a8c; }
   .credit p { font-size:.78rem; line-height:1.5; margin:0 0 8px; }
   .credit a { display:inline-block; color:#8a8a99; text-decoration:none; font-weight:600; padding:6px 14px; border:1px solid #cfcfda; border-radius:999px; font-size:.8rem; }
   .credit a:active { background:#e9e9f0; }
   .credit .fine { font-size:.68rem; opacity:.75; margin-top:10px; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
 </style>
 </head>
 <body>
+
 <div class="banner">
+  <span class="fl f1">⭐</span><span class="fl f2">📦</span><span class="fl f3">💸</span><span class="fl f4">✨</span>
+  <div class="sticker">EDISI<br>NOV<br>2026 🔥</div>
   <h1>Kalkulator Insentif Kurir Plus</h1>
-  <div>Isi data di bawah, lalu tekan tombol Hitung.</div>
+  <div class="tag"><u>Hitung dulu, senyum belakangan</u> 😎📦</div>
+  <svg class="squig" viewBox="0 0 150 18" aria-hidden="true"><path d="M2 9 Q 11 0 20 9 T 38 9 T 56 9 T 74 9 T 92 9 T 110 9 T 128 9 T 146 9" fill="none" stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round"/></svg>
 </div>
 
 <div class="wrap">
-  <div class="card">
-    <div class="hd">Total antaran</div>
-    <div class="bd big">
-      <label for="total">Jumlah paket</label>
+
+  <div class="card c-yellow">
+    <span class="tab">📦 Total antaran</span>
+    <span class="corner">👇</span>
+    <div class="big">
+      <label for="total">Berapa paket yang sudah kamu lempar bulan ini?</label>
       <input id="total" type="number" inputmode="numeric" min="0" placeholder="3000">
     </div>
   </div>
 
-  <div class="card">
-    <div class="hd">Target &amp; insentif/bonus</div>
-    <div class="bd">
-      <div class="row">
-        <div><label for="t1">Target pertama (paket)</label><input id="t1" type="number" inputmode="numeric" placeholder="955"></div>
-        <div><label for="b1">Insentif/bonus target 1 (per paket)</label><div class="money"><span>Rp</span><input id="b1" type="number" inputmode="numeric" placeholder="625"></div></div>
-      </div>
-      <div class="row">
-        <div><label for="t2">Target kedua (paket)</label><input id="t2" type="number" inputmode="numeric" placeholder="1215"></div>
-        <div><label for="b2">Insentif/bonus target 2 (per paket)</label><div class="money"><span>Rp</span><input id="b2" type="number" inputmode="numeric" placeholder="900"></div></div>
-      </div>
-      <div class="info">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap).</div>
+  <div class="card c-pink">
+    <span class="tab">🎯 Target &amp; insentif/bonus</span>
+    <span class="corner">💰</span>
+    <div class="row">
+      <div><label for="t1">Target pertama (paket)</label><input id="t1" type="number" inputmode="numeric" placeholder="955"></div>
+      <div><label for="b1">Insentif/bonus target 1 (per paket)</label><div class="money"><span>Rp</span><input id="b1" type="number" inputmode="numeric" placeholder="625"></div></div>
+    </div>
+    <div class="row">
+      <div><label for="t2">Target kedua (paket)</label><input id="t2" type="number" inputmode="numeric" placeholder="1215"></div>
+      <div><label for="b2">Insentif/bonus target 2 (per paket)</label><div class="money"><span>Rp</span><input id="b2" type="number" inputmode="numeric" placeholder="900"></div></div>
+    </div>
+    <div class="info">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.</div>
+  </div>
+
+  <div class="card c-mint">
+    <span class="tab">💵 Pendapatan lain</span>
+    <span class="corner">🤑</span>
+    <label for="gaji">Gaji bulanan</label>
+    <div class="money"><span>Rp</span><input id="gaji" type="number" inputmode="numeric" min="0" placeholder="2230000"></div>
+    <div class="info">Gaji cair tanggal 25 🗓️</div>
+    <div class="row">
+      <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="number" inputmode="numeric" min="0" placeholder="20000"></div></div>
+      <div><label for="hari">Total hari kerja</label><input id="hari" type="number" inputmode="numeric" min="0" placeholder="25"></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="hd">Pendapatan lain</div>
-    <div class="bd">
-      <label for="gaji">Gaji bulanan</label>
-      <div class="money"><span>Rp</span><input id="gaji" type="number" inputmode="numeric" min="0" placeholder="2230000"></div>
-      <div class="info">Gaji cair tanggal 25.</div>
-      <div class="row">
-        <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="number" inputmode="numeric" min="0" placeholder="20000"></div></div>
-        <div><label for="hari">Total hari kerja</label><input id="hari" type="number" inputmode="numeric" min="0" placeholder="25"></div>
-      </div>
+  <button class="btn" id="btn" type="button">HITUNG, BISMILLAH! 🚀</button>
+  <div class="err" id="err">Eits, total antarannya belum diisi 🙈</div>
+
+  <div class="card c-lilac" id="hasil">
+    <span class="tab">🎉 Hasilnya nih</span>
+    <span class="corner">🥁</span>
+    <div class="hero">
+      <span class="st s1">⭐</span><span class="st s2">✨</span><span class="st s3">💸</span><span class="st s4">🎊</span>
+      <div class="lbl">Total insentif/bonus</div>
+      <div class="num" id="bonus">Rp0</div>
+      <div class="sub2">Cair 15 Desember 2026 ke Dompet Kurir 💳</div>
     </div>
-  </div>
+    <div class="bubble" id="komen">...</div>
+    <div class="line"><span>Status</span><b id="status">-</b></div>
+    <div class="line hl"><span>Insentif/bonus target 1</span><b id="r1">Rp0</b></div>
+    <div class="line"><span>Paket target 1</span><b id="p1">0</b></div>
+    <div class="line hl"><span>Insentif/bonus target 2</span><b id="r2">Rp0</b></div>
+    <div class="line"><span>Paket target 2</span><b id="p2">0</b></div>
+    <div class="line hl"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
 
-  <button class="btn" id="btn" type="button">Hitung</button>
-  <div class="err" id="err">Isi dulu total antaran (jumlah paket).</div>
-
-  <div class="card" id="hasil">
-    <div class="hd">Hasil</div>
-    <div class="bd">
-      <div class="hero">
-        <div class="lbl">Total insentif/bonus</div>
-        <div class="num" id="bonus">Rp0</div>
-        <div class="sub2">Cair 15 Desember 2026 ke Dompet Kurir</div>
-      </div>
-      <div class="line"><span>Status</span><b id="status">-</b></div>
-      <div class="line hl"><span id="l1">Insentif/bonus target 1</span><b id="r1">Rp0</b></div>
-      <div class="line"><span>Paket target 1</span><b id="p1">0</b></div>
-      <div class="line hl"><span id="l2">Insentif/bonus target 2</span><b id="r2">Rp0</b></div>
-      <div class="line"><span>Paket target 2</span><b id="p2">0</b></div>
-      <div class="line hl"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
-
-      <div class="sect">Semua uang masuk</div>
-      <div class="line"><span>Insentif/bonus</span><b id="bonus2">Rp0</b></div>
-      <div class="line"><span>Gaji (cair tanggal 25)</span><b id="vgaji">Rp0</b></div>
-      <div class="line"><span>Uang harian (hari x harian)</span><b id="vharian">Rp0</b></div>
-      <div class="total">
-        <div class="lbl">Total semua uang masuk</div>
-        <div class="num" id="grand">Rp0</div>
-      </div>
-      <div class="total">
-        <div class="lbl">Rata-rata per paket (semua uang masuk)</div>
-        <div class="num sm" id="perall">Rp0</div>
-      </div>
-      <div class="line" style="margin-top:10px"><span>Per hari (semua uang masuk)</span><b id="perhari">Rp0</b></div>
-      <div class="line"><span>Rata-rata paket per hari</span><b id="pakethari">0</b></div>
-      <div class="info">Insentif/bonus cair 15 Desember 2026, gaji cair tanggal 25.</div>
+    <div class="sect">💼 Semua uang masuk</div>
+    <div class="line"><span>Insentif/bonus</span><b id="bonus2">Rp0</b></div>
+    <div class="line"><span>Gaji (cair tanggal 25)</span><b id="vgaji">Rp0</b></div>
+    <div class="line"><span>Uang harian (hari x harian)</span><b id="vharian">Rp0</b></div>
+    <div class="total">
+      <div class="lbl">TOTAL SEMUA UANG MASUK 🤩</div>
+      <div class="num" id="grand">Rp0</div>
     </div>
+    <div class="total alt">
+      <div class="lbl">Rata-rata per paket (semua uang masuk)</div>
+      <div class="num sm" id="perall">Rp0</div>
+    </div>
+    <div class="line" style="margin-top:12px"><span>Per hari (semua uang masuk)</span><b id="perhari">Rp0</b></div>
+    <div class="line"><span>Rata-rata paket per hari</span><b id="pakethari">0</b></div>
+    <div class="info">Insentif/bonus cair 15 Desember 2026, gaji cair tanggal 25.</div>
   </div>
 </div>
 
@@ -172,27 +252,37 @@ function hitung() {
   $('perall').textContent = total ? rp(grand / total) : 'Rp0';
   $('perbonus').textContent = total ? rp(bonus / total) : 'Rp0';
   $('perhari').textContent = hari ? rp(grand / hari) : 'Rp0';
-  $('pakethari').textContent = hari ? (total / hari).toLocaleString('id-ID', {maximumFractionDigits: 1}) + ' paket' : '0';
+  const perHariPaket = hari ? total / hari : 0;
+  $('pakethari').textContent = hari ? perHariPaket.toLocaleString('id-ID', {maximumFractionDigits: 1}) + ' paket' : '0';
 
-  let s;
-  if (total >= t2) s = 'Target 2 tercapai ✅✅';
-  else if (total >= t1) s = 'Target 1 tercapai ✅ (kurang ' + nf(t2 - total) + ' ke target 2)';
-  else s = 'Belum target (kurang ' + nf(t1 - total) + ')';
+  let s, k;
+  if (total >= t2) {
+    s = 'Target 2 tercapai ✅✅';
+    k = perHariPaket >= 200 ? '200+ paket per hari?! Ini sih Yang Mulia beneran 👑🔥' : 'Target 2 tembus! Dompet Kurir tersenyum 😎💸';
+  } else if (total >= t1) {
+    s = 'Target 1 tercapai ✅ (kurang ' + nf(t2 - total) + ' ke target 2)';
+    k = 'Target 1 aman! Tinggal ' + nf(t2 - total) + ' paket lagi ke target 2, gas jangan kendor 🛵💨';
+  } else {
+    s = 'Belum target (kurang ' + nf(t1 - total) + ')';
+    k = 'Belum target nih, kurang ' + nf(t1 - total) + ' paket. Semangat, motor masih bensinnya ⛽😤';
+  }
   $('status').textContent = s;
+  $('komen').textContent = k;
 }
 
 function tampil() {
-  if (!$('total').value) { $('err').style.display = 'block'; $('hasil').style.display = 'none'; $('total').focus(); return; }
+  if (!$('total').value) { $('err').style.display = 'block'; $('hasil').classList.remove('show'); $('total').focus(); return; }
   $('err').style.display = 'none';
   hitung();
-  $('hasil').style.display = 'block';
-  $('hasil').scrollIntoView({behavior: 'smooth', block: 'start'});
+  const h = $('hasil');
+  h.classList.remove('show'); void h.offsetWidth; h.classList.add('show');
+  h.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 $('btn').addEventListener('click', tampil);
 // setelah hasil muncul, ubah angka langsung memperbarui hasil
 document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
-  if ($('hasil').style.display === 'block') {
-    if (!$('total').value) { $('hasil').style.display = 'none'; return; }
+  if ($('hasil').classList.contains('show')) {
+    if (!$('total').value) { $('hasil').classList.remove('show'); return; }
     hitung();
   }
 }));
