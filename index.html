@@ -124,6 +124,11 @@
   .credit a:active { background:#e9e9f0; }
   .credit .fine { font-size:.68rem; opacity:.75; margin-top:10px; }
 
+  .chips { margin-top:10px; }
+  .chip { display:inline-block; margin:4px 3px; padding:5px 12px 3px; border:2.5px solid var(--ink); border-radius:999px; font-family:var(--head); font-weight:800; font-size:.85rem; box-shadow:3px 3px 0 var(--ink); }
+  #cd1 { background:var(--mint); transform:rotate(-1.5deg); } #cd2 { background:var(--pink); transform:rotate(1.5deg); }
+  .btn2 { display:block; margin:-2px auto 16px; padding:8px 18px; font-family:var(--head); font-weight:800; font-size:.95rem; color:var(--ink); background:#fff; border:2.5px dashed var(--ink); border-radius:999px; cursor:pointer; }
+  .btn2:active { background:var(--yellow); }
   @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
 </style>
 </head>
@@ -134,6 +139,7 @@
   <div class="sticker">EDISI<br>NOV<br>2026 🔥</div>
   <h1>Kalkulator Insentif Kurir Plus</h1>
   <div class="tag"><u>Hitung dulu, senyum belakangan</u> 😎📦</div>
+  <div class="chips"><span class="chip" id="cd1">...</span><span class="chip" id="cd2">...</span></div>
   <svg class="squig" viewBox="0 0 150 18" aria-hidden="true"><path d="M2 9 Q 11 0 20 9 T 38 9 T 56 9 T 74 9 T 92 9 T 110 9 T 128 9 T 146 9" fill="none" stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round"/></svg>
 </div>
 
@@ -144,7 +150,7 @@
     <span class="corner">👇</span>
     <div class="big">
       <label for="total">Berapa paket yang sudah kamu lempar bulan ini?</label>
-      <input id="total" type="number" inputmode="numeric" min="0" placeholder="3000">
+      <input id="total" type="text" inputmode="numeric" autocomplete="off" placeholder="3.000">
     </div>
   </div>
 
@@ -152,12 +158,12 @@
     <span class="tab">🎯 Target &amp; insentif/bonus</span>
     <span class="corner">💰</span>
     <div class="row">
-      <div><label for="t1">Target pertama (paket)</label><input id="t1" type="number" inputmode="numeric" placeholder="955"></div>
-      <div><label for="b1">Insentif/bonus target 1 (per paket)</label><div class="money"><span>Rp</span><input id="b1" type="number" inputmode="numeric" placeholder="625"></div></div>
+      <div><label for="t1">Target pertama (paket)</label><input id="t1" type="text" inputmode="numeric" autocomplete="off" placeholder="955"></div>
+      <div><label for="b1">Insentif/bonus target 1 (per paket)</label><div class="money"><span>Rp</span><input id="b1" type="text" inputmode="numeric" autocomplete="off" placeholder="625"></div></div>
     </div>
     <div class="row">
-      <div><label for="t2">Target kedua (paket)</label><input id="t2" type="number" inputmode="numeric" placeholder="1215"></div>
-      <div><label for="b2">Insentif/bonus target 2 (per paket)</label><div class="money"><span>Rp</span><input id="b2" type="number" inputmode="numeric" placeholder="900"></div></div>
+      <div><label for="t2">Target kedua (paket)</label><input id="t2" type="text" inputmode="numeric" autocomplete="off" placeholder="1.215"></div>
+      <div><label for="b2">Insentif/bonus target 2 (per paket)</label><div class="money"><span>Rp</span><input id="b2" type="text" inputmode="numeric" autocomplete="off" placeholder="900"></div></div>
     </div>
     <div class="info">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.</div>
   </div>
@@ -166,16 +172,17 @@
     <span class="tab">💵 Pendapatan lain</span>
     <span class="corner">🤑</span>
     <label for="gaji">Gaji bulanan</label>
-    <div class="money"><span>Rp</span><input id="gaji" type="number" inputmode="numeric" min="0" placeholder="2230000"></div>
+    <div class="money"><span>Rp</span><input id="gaji" type="text" inputmode="numeric" autocomplete="off" placeholder="2.230.000"></div>
     <div class="info">Gaji cair tanggal 25 🗓️</div>
     <div class="row">
-      <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="number" inputmode="numeric" min="0" placeholder="20000"></div></div>
-      <div><label for="hari">Total hari kerja</label><input id="hari" type="number" inputmode="numeric" min="0" placeholder="25"></div>
+      <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="text" inputmode="numeric" autocomplete="off" placeholder="20.000"></div></div>
+      <div><label for="hari">Total hari kerja</label><input id="hari" type="text" inputmode="numeric" autocomplete="off" placeholder="25"></div>
     </div>
   </div>
 
   <button class="btn" id="btn" type="button">HITUNG, BISMILLAH! 🚀</button>
   <div class="err" id="err">Eits, total antarannya belum diisi 🙈</div>
+  <button class="btn2" id="reset" type="button">🧹 Reset semua kolom</button>
 
   <div class="card c-lilac" id="hasil">
     <span class="tab">🎉 Hasilnya nih</span>
@@ -225,9 +232,12 @@
 const $ = id => document.getElementById(id);
 const rp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
 const nf = n => n.toLocaleString('id-ID');
-const num = id => Math.max(0, parseFloat($(id).value) || 0);
+const digits = t => (t || '').replace(/\D/g, '');
+const fmt = d => d.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const rawNum = id => { const d = digits($(id).value); return d === '' ? NaN : parseInt(d, 10); };
+const num = id => { const v = rawNum(id); return isNaN(v) ? 0 : v; };
 // kolom target/insentif/hari kerja yang dikosongkan memakai angka contoh (placeholder)
-const numD = id => { const v = parseFloat($(id).value); return v >= 0 ? v : (parseFloat($(id).placeholder) || 0); };
+const numD = id => { const v = rawNum(id); return isNaN(v) ? (parseInt(digits($(id).placeholder), 10) || 0) : v; };
 
 function hitung() {
   const total = num('total'), t1 = numD('t1'), t2 = numD('t2'), b1 = numD('b1'), b2 = numD('b2');
@@ -279,13 +289,70 @@ function tampil() {
   h.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 $('btn').addEventListener('click', tampil);
-// setelah hasil muncul, ubah angka langsung memperbarui hasil
+// ===== titik ribuan otomatis di kolom =====
+function formatInput(el) {
+  const pos = el.selectionStart;
+  const before = digits(el.value.slice(0, pos)).length;
+  const d = digits(el.value).replace(/^0+(?=\d)/, '');
+  el.value = fmt(d);
+  let c = 0, i = 0;
+  if (before > 0) {
+    for (i = 0; i < el.value.length; i++) {
+      if (/\d/.test(el.value[i])) c++;
+      if (c === before) { i++; break; }
+    }
+  }
+  try { el.setSelectionRange(i, i); } catch (e) {}
+}
+
+// ===== simpan otomatis =====
+const KEY = 'kalkulator-insentif-kurir-v1';
+const IDS = ['total','t1','b1','t2','b2','gaji','harian','hari'];
+function simpan() {
+  try { const o = {}; IDS.forEach(id => o[id] = $(id).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+}
+function muat() {
+  try {
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (o) IDS.forEach(id => { if (typeof o[id] === 'string') $(id).value = o[id]; });
+  } catch (e) {}
+}
+
+// ===== hitung mundur pencairan =====
+function hitungMundur() {
+  const now = new Date();
+  const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let g = new Date(t0.getFullYear(), t0.getMonth(), 25);
+  if (t0 > g) g = new Date(t0.getFullYear(), t0.getMonth() + 1, 25);
+  const dg = Math.round((g - t0) / 864e5);
+  $('cd1').textContent = dg === 0 ? 'Hari ini gaji cair! 🎉🥳' : 'Gaji cair tgl 25: ' + dg + ' hari lagi 🗓️';
+  const di = Math.round((new Date(2026, 11, 15) - t0) / 864e5);
+  $('cd2').textContent = di > 0 ? 'Insentif/bonus cair 15 Des: ' + di + ' hari lagi 🎁'
+                       : di === 0 ? 'Hari ini insentif/bonus cair! 🎉' : 'Insentif/bonus 15 Des 2026 sudah cair ✅';
+}
+
+// ===== event =====
 document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
+  formatInput(el);
+  simpan();
+  // setelah hasil muncul, ubah angka langsung memperbarui hasil
   if ($('hasil').classList.contains('show')) {
     if (!$('total').value) { $('hasil').classList.remove('show'); return; }
     hitung();
   }
 }));
+
+$('reset').addEventListener('click', () => {
+  IDS.forEach(id => $(id).value = '');
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  $('hasil').classList.remove('show');
+  $('err').style.display = 'none';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+
+muat();
+IDS.forEach(id => { if ($(id).value) formatInput($(id)); });
+hitungMundur();
 </script>
 </body>
 </html>
