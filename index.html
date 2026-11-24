@@ -129,6 +129,35 @@
   #cd1 { background:var(--mint); transform:rotate(-1.5deg); } #cd2 { background:var(--pink); transform:rotate(1.5deg); }
   .btn2 { display:block; margin:-2px auto 16px; padding:8px 18px; font-family:var(--head); font-weight:800; font-size:.95rem; color:var(--ink); background:#fff; border:2.5px dashed var(--ink); border-radius:999px; cursor:pointer; }
   .btn2:active { background:var(--yellow); }
+  .modes { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:16px 0 4px; }
+  .mode-btn { font-family:var(--head); font-weight:800; font-size:.82rem; line-height:1.15; padding:10px 3px 8px; color:var(--ink); background:#fff;
+    border:3px solid var(--ink); border-radius:var(--wobble); box-shadow:4px 4px 0 var(--ink); cursor:pointer; }
+  .mode-btn[aria-pressed="true"] { background:var(--yellow); box-shadow:1px 1px 0 var(--ink); transform:translate(3px,3px); }
+  body[data-mode="plus"] .only-ded { display:none !important; }
+  body:not([data-mode="plus"]) .only-plus { display:none !important; }
+  body[data-mode="driver"] .bubble::before { content:"🚗"; transform:none; }
+  .fold { display:flex; justify-content:space-between; align-items:center; width:100%; margin:8px 0 0; padding:10px 12px; font-family:var(--head); font-weight:800; font-size:.95rem; color:var(--ink); text-align:left; background:#fffdf3; border:2.5px dashed var(--ink); border-radius:12px; cursor:pointer; }
+  .fold .mark { color:#d6410f; font-size:.8rem; margin-left:4px; }
+  #foldBody[hidden] { display:none; }
+  .c-orange .tab { background:var(--orange); }
+  /* jalur balap */
+  .track { position:relative; height:76px; margin:4px 6px 0; }
+  .road { position:absolute; left:0; right:0; bottom:26px; border-bottom:4px dashed var(--ink); }
+  .flag { position:absolute; bottom:26px; transform:translateX(-50%); font-size:1.5rem; line-height:1; }
+  .flag small { position:absolute; top:100%; left:50%; transform:translateX(-50%); margin-top:4px; white-space:nowrap; font-family:var(--head); font-weight:800; font-size:.7rem; }
+  .veh { position:absolute; bottom:24px; left:0; font-size:1.8rem; line-height:1; transform:translateX(-50%) scaleX(-1); transition:left 1.1s cubic-bezier(.3,1.35,.5,1); }
+  .tracklbl { text-align:center; font-size:.8rem; font-weight:800; color:var(--muted); margin:0 0 14px; }
+  .btn3 { display:block; width:100%; margin:0 0 14px; padding:11px 8px; font-family:var(--head); font-weight:800; font-size:1.05rem; color:var(--ink); background:var(--mint); border:3px solid var(--ink); border-radius:var(--wobble); box-shadow:4px 4px 0 var(--ink); cursor:pointer; }
+  .btn3:active { transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+  .jawab { display:none; margin-top:12px; background:#fffdf3; border:3px solid var(--ink); border-radius:16px; padding:10px 12px; font-weight:800; font-size:.92rem; box-shadow:3px 3px 0 var(--ink); line-height:1.4; }
+  .overlay { position:fixed; inset:0; z-index:50; background:rgba(27,27,27,.78); display:flex; align-items:center; justify-content:center; padding:14px; overflow:auto; }
+  .overlay[hidden] { display:none; }
+  .kpanel { background:var(--paper); border:3px solid var(--ink); border-radius:20px; padding:12px; max-width:420px; width:100%; box-shadow:6px 6px 0 var(--ink); text-align:center; }
+  .kpanel img { width:100%; height:auto; border:3px solid var(--ink); border-radius:12px; display:block; background:#fff; }
+  .krow { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
+  .krow button, .krow a { font-family:var(--head); font-weight:800; font-size:.95rem; padding:10px 4px; border:3px solid var(--ink); border-radius:12px; background:#fff; color:var(--ink); text-decoration:none; cursor:pointer; box-shadow:3px 3px 0 var(--ink); }
+  #kartuShare { background:var(--mint); } #kartuSave { background:var(--yellow); }
+  .kinfo { font-size:.75rem; color:var(--muted); font-weight:600; margin-top:8px; }
   @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
 </style>
 </head>
@@ -137,13 +166,19 @@
 <div class="banner">
   <span class="fl f1">⭐</span><span class="fl f2">📦</span><span class="fl f3">💸</span><span class="fl f4">✨</span>
   <div class="sticker">EDISI<br>NOV<br>2026 🔥</div>
-  <h1>Kalkulator Insentif Kurir Plus</h1>
-  <div class="tag"><u>Hitung dulu, senyum belakangan</u> 😎📦</div>
+  <h1 id="judul">Kalkulator Insentif Kurir Plus</h1>
+  <div class="tag" id="tagline"><u>Hitung dulu, senyum belakangan</u> 😎📦</div>
   <div class="chips"><span class="chip" id="cd1">...</span><span class="chip" id="cd2">...</span></div>
   <svg class="squig" viewBox="0 0 150 18" aria-hidden="true"><path d="M2 9 Q 11 0 20 9 T 38 9 T 56 9 T 74 9 T 92 9 T 110 9 T 128 9 T 146 9" fill="none" stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round"/></svg>
 </div>
 
 <div class="wrap">
+
+  <div class="modes">
+    <button class="mode-btn" id="mPlus" type="button" aria-pressed="true">🛵 Kurir Plus</button>
+    <button class="mode-btn" id="mDed" type="button" aria-pressed="false">🛵 Kurir Dedicated</button>
+    <button class="mode-btn" id="mDriver" type="button" aria-pressed="false">🚗 Driver Dedicated</button>
+  </div>
 
   <div class="card c-yellow">
     <span class="tab">📦 Total antaran</span>
@@ -162,21 +197,24 @@
       <div><label for="b1">Insentif/bonus target 1 (per paket)</label><div class="money"><span>Rp</span><input id="b1" type="text" inputmode="numeric" autocomplete="off" placeholder="625"></div></div>
     </div>
     <div class="row">
-      <div><label for="t2">Target kedua (paket)</label><input id="t2" type="text" inputmode="numeric" autocomplete="off" placeholder="1.215"></div>
+      <div><label for="t2" id="lt2">Target kedua (paket)</label><input id="t2" type="text" inputmode="numeric" autocomplete="off" placeholder="1.215"></div>
       <div><label for="b2">Insentif/bonus target 2 (per paket)</label><div class="money"><span>Rp</span><input id="b2" type="text" inputmode="numeric" autocomplete="off" placeholder="900"></div></div>
     </div>
-    <div class="info">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.</div>
+    <div class="info" id="infoTarget">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.</div>
   </div>
 
-  <div class="card c-mint">
+  <div class="card c-mint only-plus">
     <span class="tab">💵 Pendapatan lain</span>
     <span class="corner">🤑</span>
+    <button class="fold" id="foldBtn" type="button" aria-expanded="false"><span>Gaji, uang harian &amp; hari kerja <b class="mark" id="foldMark"></b></span><span id="foldArrow">▾</span></button>
+    <div id="foldBody" hidden>
     <label for="gaji">Gaji bulanan</label>
     <div class="money"><span>Rp</span><input id="gaji" type="text" inputmode="numeric" autocomplete="off" placeholder="2.230.000"></div>
     <div class="info">Gaji cair tanggal 25 🗓️</div>
     <div class="row">
       <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="text" inputmode="numeric" autocomplete="off" placeholder="20.000"></div></div>
       <div><label for="hari">Total hari kerja</label><input id="hari" type="text" inputmode="numeric" autocomplete="off" placeholder="25"></div>
+    </div>
     </div>
   </div>
 
@@ -191,15 +229,25 @@
       <span class="st s1">⭐</span><span class="st s2">✨</span><span class="st s3">💸</span><span class="st s4">🎊</span>
       <div class="lbl">Total insentif/bonus</div>
       <div class="num" id="bonus">Rp0</div>
-      <div class="sub2">Cair 15 Desember 2026 ke Dompet Kurir 💳</div>
+      <div class="sub2" id="subhero">Cair tiap tanggal 15 ke Dompet Kurir 💳</div>
     </div>
     <div class="bubble" id="komen">...</div>
+    <div class="track" id="track">
+      <div class="road"></div>
+      <div class="flag" id="fl1">🚩<small></small></div>
+      <div class="flag" id="fl2">🏁<small></small></div>
+      <div class="veh" id="veh">🛵</div>
+    </div>
+    <div class="tracklbl" id="tracklbl"></div>
+    <button class="btn3" id="kartuBtn" type="button">🤑 Buat kartu pamer</button>
     <div class="line"><span>Status</span><b id="status">-</b></div>
     <div class="line hl"><span>Insentif/bonus target 1</span><b id="r1">Rp0</b></div>
     <div class="line"><span>Paket target 1</span><b id="p1">0</b></div>
     <div class="line hl"><span>Insentif/bonus target 2</span><b id="r2">Rp0</b></div>
     <div class="line"><span>Paket target 2</span><b id="p2">0</b></div>
+    <div class="line hl only-ded"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
 
+    <div class="only-plus">
     <div class="sect">💼 Semua uang masuk</div>
     <div class="line"><span>Insentif/bonus</span><b id="bonus2">Rp0</b></div>
     <div class="line"><span>Gaji (cair tanggal 25)</span><b id="vgaji">Rp0</b></div>
@@ -214,7 +262,30 @@
     </div>
     <div class="line" style="margin-top:12px"><span>Per hari (semua uang masuk)</span><b id="perhari">Rp0</b></div>
     <div class="line"><span>Rata-rata paket per hari</span><b id="pakethari">0</b></div>
-    <div class="info">Insentif/bonus cair 15 Desember 2026, gaji cair tanggal 25.</div>
+    <div class="info">Insentif/bonus cair tiap tanggal 15, gaji cair tiap tanggal 25.</div>
+    </div>
+  </div>
+
+  <div class="card c-orange">
+    <span class="tab">🔮 Mau dapat berapa?</span>
+    <span class="corner">🙏</span>
+    <label for="incar">Insentif/bonus yang kamu incar</label>
+    <div class="money"><span>Rp</span><input id="incar" type="text" inputmode="numeric" autocomplete="off" placeholder="2.000.000"></div>
+    <div class="info">Pakai target dan insentif/bonus per paket yang diisi di atas.</div>
+    <button class="btn3" id="btnIncar" type="button" style="margin:10px 0 0">CARI TAHU 🔍</button>
+    <div class="jawab" id="hasilIncar"></div>
+  </div>
+</div>
+
+<div class="overlay" id="kartuBox" hidden>
+  <div class="kpanel">
+    <img id="kartuImg" alt="Kartu pamer insentif">
+    <div class="krow">
+      <button id="kartuShare" type="button">📤 Bagikan</button>
+      <a id="kartuSave" download="kartu-insentif.png" href="#">💾 Simpan</a>
+      <button id="kartuClose" type="button">Tutup</button>
+    </div>
+    <div class="kinfo" id="kartuInfo">Kalau tombol bagikan tidak jalan, tekan lama gambarnya untuk menyimpan.</div>
   </div>
 </div>
 
@@ -239,7 +310,12 @@ const num = id => { const v = rawNum(id); return isNaN(v) ? 0 : v; };
 const numD = id => { const v = rawNum(id); return isNaN(v) ? (parseInt(digits($(id).placeholder), 10) || 0) : v; };
 
 function hitung() {
-  const total = num('total'), t1 = numD('t1'), t2 = numD('t2'), b1 = numD('b1'), b2 = numD('b2');
+  const ded = MODE !== 'plus';
+  const kend = MODE === 'driver' ? '🚗' : '🛵';
+  const total = num('total'), t1 = numD('t1'), b1 = numD('b1'), b2 = numD('b2');
+  // di mode dedicated, target kedua boleh kosong (berarti hanya satu tingkat)
+  const t2 = (ded && isNaN(rawNum('t2'))) ? Infinity : numD('t2');
+  const noT2 = !isFinite(t2);
   const gaji = num('gaji'), harian = num('harian'), hari = numD('hari');
 
   const p1 = Math.max(0, Math.min(total, t2) - t1);
@@ -259,27 +335,151 @@ function hitung() {
   $('vharian').textContent = rp(vharian);
   $('grand').textContent = rp(grand);
   $('perall').textContent = total ? rp(grand / total) : 'Rp0';
+  $('perbonus').textContent = total ? rp(bonus / total) : 'Rp0';
   $('perhari').textContent = hari ? rp(grand / hari) : 'Rp0';
   const perHariPaket = hari ? total / hari : 0;
   $('pakethari').textContent = hari ? perHariPaket.toLocaleString('id-ID', {maximumFractionDigits: 1}) + ' paket' : '0';
 
   let s, k;
-  if (total >= t2) {
+  if (noT2) {
+    if (total >= t1) { s = 'Target tercapai ✅'; k = 'Target tembus! Insentif/bonus mengalir ' + kend + '💸'; }
+    else { s = 'Belum target (kurang ' + nf(t1 - total) + ')'; k = 'Belum target nih, kurang ' + nf(t1 - total) + ' paket. Gas terus, jangan lupa isi bensin ⛽😤'; }
+  } else if (total >= t2) {
     s = 'Target 2 tercapai ✅✅';
-    k = perHariPaket >= 200 ? '200+ paket per hari?! Ini sih Yang Mulia beneran 👑🔥' : 'Target 2 tembus! Dompet Kurir tersenyum 😎💸';
+    k = ded ? 'Target 2 tembus! Insentif/bonus makin tebal 😎💸' : (perHariPaket >= 200 ? '200+ paket per hari?! Ini sih Yang Mulia beneran 👑🔥' : 'Target 2 tembus! Dompet Kurir tersenyum 😎💸');
   } else if (total >= t1) {
     s = 'Target 1 tercapai ✅ (kurang ' + nf(t2 - total) + ' ke target 2)';
-    k = 'Target 1 aman! Tinggal ' + nf(t2 - total) + ' paket lagi ke target 2, gas jangan kendor 🛵💨';
+    k = 'Target 1 aman! Tinggal ' + nf(t2 - total) + ' paket lagi ke target 2, gas jangan kendor ' + kend + '💨';
   } else {
     s = 'Belum target (kurang ' + nf(t1 - total) + ')';
-    k = 'Belum target nih, kurang ' + nf(t1 - total) + ' paket. Semangat, motor masih bensinnya ⛽😤';
+    k = 'Belum target nih, kurang ' + nf(t1 - total) + ' paket. Semangat, ' + (MODE === 'driver' ? 'mobil' : 'motor') + ' masih bensinnya ⛽😤';
   }
   $('status').textContent = s;
   $('komen').textContent = k;
+
+  // jalur balap menuju target
+  const finis = noT2 ? t1 : t2;
+  const mx = finis * 1.12;
+  if (mx > 0) {
+    $('track').style.display = 'block';
+    const pos = v => Math.max(4, Math.min(96, v / mx * 100));
+    $('fl1').style.left = pos(t1) + '%';
+    $('fl1').querySelector('small').textContent = 'T1 · ' + nf(t1);
+    $('fl2').style.display = noT2 ? 'none' : 'block';
+    if (!noT2) { $('fl2').style.left = pos(t2) + '%'; $('fl2').querySelector('small').textContent = 'T2 · ' + nf(t2); }
+    $('veh').style.left = '4%';
+    setTimeout(() => { $('veh').style.left = pos(total) + '%'; }, 200);
+    $('tracklbl').textContent = 'Posisi kamu: ' + nf(total) + ' paket' + (total >= finis ? ' · 🔥 finish terlewati!' : ' · sisa ' + nf(finis - total) + ' ke ' + (noT2 ? 'target' : 'T2'));
+  } else {
+    $('track').style.display = 'none'; $('tracklbl').textContent = '';
+  }
+}
+
+// ===== hitung terbalik: mau dapat Rp berapa, butuh berapa paket =====
+function cariIncar() {
+  const out = $('hasilIncar'); out.style.display = 'block';
+  const I = num('incar');
+  if (!I) { out.textContent = 'Isi dulu insentif/bonus yang kamu incar ya 🙈'; return; }
+  const ded = MODE !== 'plus';
+  if (ded && (isNaN(rawNum('t1')) || isNaN(rawNum('b1')))) { out.textContent = 'Isi dulu target pertama dan insentif/bonus per paketnya di atas ya 🎯'; return; }
+  const t1 = numD('t1'), b1 = numD('b1'), b2 = numD('b2');
+  const t2 = (ded && isNaN(rawNum('t2'))) ? Infinity : numD('t2');
+  if (b1 <= 0) { out.textContent = 'Insentif/bonus per paket target 1 belum terisi.'; return; }
+  const cap1 = isFinite(t2) ? Math.max(0, t2 - t1) * b1 : Infinity;
+  let need;
+  if (I <= cap1) need = t1 + Math.ceil(I / b1);
+  else if (b2 <= 0) { out.textContent = 'Dengan angka sekarang, insentif/bonus paling banyak ' + rp(cap1) + '. Insentif/bonus target 2 belum terisi.'; return; }
+  else need = t2 + Math.ceil((I - cap1) / b2);
+  const total = num('total');
+  let msg = 'Untuk dapat ' + rp(I) + ', kamu butuh sekitar ' + nf(need) + ' paket total 🎯';
+  if (total) msg += need > total ? ' (kurang ' + nf(need - total) + ' paket dari antaranmu sekarang 🚀)' : ' (antaranmu sekarang sudah cukup, mantap! 🎉)';
+  out.textContent = msg;
+}
+
+// ===== kartu pamer (gambar untuk dibagikan) =====
+let KARTU = null;
+async function buatKartu() {
+  const F = "'Baloo 2','Comic Sans MS','Chalkboard SE',system-ui,sans-serif";
+  try { if (document.fonts) { await document.fonts.load('800 40px "Baloo 2"'); await document.fonts.load('700 40px "Baloo 2"'); } } catch (e) {}
+  const W = 1080, H = 1350;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const INK = '#1b1b1b';
+  const rr = (px, py, w, h, r) => { x.beginPath(); x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r); x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath(); };
+  const box = (px, py, w, h, r, fill, lw, sh) => {
+    if (sh) { x.fillStyle = INK; rr(px + sh, py + sh, w, h, r); x.fill(); }
+    x.fillStyle = fill; rr(px, py, w, h, r); x.fill();
+    x.lineWidth = lw; x.strokeStyle = INK; x.stroke();
+  };
+  const txt = (t, px, py, size, wgt, col, al) => { x.font = wgt + ' ' + size + 'px ' + F; x.fillStyle = col || INK; x.textAlign = al || 'center'; x.textBaseline = 'middle'; x.fillText(t, px, py); };
+  const wrap = (t, px, py, maxW, size, lh, maxLines) => {
+    x.font = '800 ' + size + 'px ' + F; x.fillStyle = INK; x.textAlign = 'center'; x.textBaseline = 'middle';
+    const words = t.split(' '); const lines = []; let cur = '';
+    words.forEach(w => { const test = cur ? cur + ' ' + w : w; if (x.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; } else cur = test; });
+    if (cur) lines.push(cur);
+    lines.slice(0, maxLines).forEach((l, i) => x.fillText(l, px, py + i * lh));
+    return Math.min(lines.length, maxLines);
+  };
+
+  // latar kertas bertitik
+  x.fillStyle = '#fff6dc'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#e8d9a8';
+  for (let gx = 18; gx < W; gx += 36) for (let gy = 18; gy < H; gy += 36) { x.beginPath(); x.arc(gx, gy, 3, 0, 7); x.fill(); }
+
+  const mode = TEKS[MODE].judul.replace('Kalkulator Insentif ', '');
+  const kend = MODE === 'driver' ? '🚗' : '🛵';
+
+  // stiker judul
+  x.save(); x.translate(W / 2, 150); x.rotate(-0.04);
+  box(-400, -80, 800, 160, 50, '#ffd93d', 8, 12);
+  txt('KALKULATOR INSENTIF', 0, -22, 52, 800);
+  txt(mode + ' ' + kend, 0, 36, 46, 700);
+  x.restore();
+
+  // kotak utama
+  box(70, 310, 940, 500, 56, '#ffd93d', 10, 18);
+  txt('INSENTIF/BONUS GUE', W / 2, 395, 52, 800);
+  let fs = 170; const nominal = $('bonus').textContent;
+  x.font = '800 ' + fs + 'px ' + F;
+  while (x.measureText(nominal).width > 820 && fs > 60) { fs -= 6; x.font = '800 ' + fs + 'px ' + F; }
+  txt(nominal, W / 2, 580, fs, 800, '#d6410f');
+  txt('dari ' + ($('total').value || '0') + ' paket', W / 2, 745, 54, 700);
+  txt('⭐', 130, 370, 80); txt('✨', 950, 380, 80); txt('💸', 945, 760, 80); txt('🎊', 135, 760, 80);
+
+  // gelembung komentar
+  box(90, 880, 900, 250, 44, '#ffffff', 8, 12);
+  txt(kend, 150, 880, 90);
+  const n = wrap($('komen').textContent, W / 2, 1005, 800, 44, 62, 3);
+
+  // footer
+  box(170, 1190, 740, 120, 60, '#8ff0c4', 6, 8);
+  txt('Hitung punyamu juga 👉 kalkulator by', W / 2, 1228, 36, 700);
+  txt('Yang Mulia @syharl 👑', W / 2, 1272, 44, 800);
+
+  c.toBlob(blob => {
+    if (!blob) return;
+    KARTU = blob;
+    const url = URL.createObjectURL(blob);
+    $('kartuImg').src = url;
+    $('kartuSave').href = url;
+    $('kartuBox').hidden = false;
+  }, 'image/png');
+}
+async function bagikanKartu() {
+  if (!KARTU) return;
+  const f = new File([KARTU], 'kartu-insentif.png', {type: 'image/png'});
+  try {
+    if (navigator.canShare && navigator.canShare({files: [f]})) { await navigator.share({files: [f], text: 'Insentif/bonus gue bulan ini 🤑'}); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  $('kartuInfo').textContent = 'HP ini belum bisa membagikan langsung. Tekan Simpan, atau tekan lama gambarnya.';
 }
 
 function tampil() {
-  if (!$('total').value) { $('err').style.display = 'block'; $('hasil').classList.remove('show'); $('total').focus(); return; }
+  if (!$('total').value) { $('err').textContent = 'Eits, total antarannya belum diisi 🙈'; $('err').style.display = 'block'; $('hasil').classList.remove('show'); $('total').focus(); return; }
+  if (MODE !== 'plus' && (isNaN(rawNum('t1')) || isNaN(rawNum('b1')))) {
+    $('err').textContent = 'Isi dulu target pertama dan insentif/bonus per paketnya ya 🎯';
+    $('err').style.display = 'block'; $('hasil').classList.remove('show'); (isNaN(rawNum('t1')) ? $('t1') : $('b1')).focus(); return;
+  }
   $('err').style.display = 'none';
   hitung();
   const h = $('hasil');
@@ -303,36 +503,84 @@ function formatInput(el) {
   try { el.setSelectionRange(i, i); } catch (e) {}
 }
 
-// ===== simpan otomatis =====
+// ===== simpan otomatis (terpisah per mode) =====
 const KEY = 'kalkulator-insentif-kurir-v1';
-const IDS = ['total','t1','b1','t2','b2','gaji','harian','hari'];
+const MODEKEY = KEY + '-mode';
+const IDS = ['total','t1','b1','t2','b2','gaji','harian','hari','incar'];
+let MODE = 'plus';
+const keyOf = m => m === 'plus' ? KEY : KEY + '-' + m;
 function simpan() {
-  try { const o = {}; IDS.forEach(id => o[id] = $(id).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+  try { const o = {}; IDS.forEach(id => o[id] = $(id).value); localStorage.setItem(keyOf(MODE), JSON.stringify(o)); } catch (e) {}
 }
 function muat() {
+  IDS.forEach(id => $(id).value = '');
   try {
-    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    const o = JSON.parse(localStorage.getItem(keyOf(MODE)) || 'null');
     if (o) IDS.forEach(id => { if (typeof o[id] === 'string') $(id).value = o[id]; });
   } catch (e) {}
+  IDS.forEach(id => { if ($(id).value) formatInput($(id)); });
+}
+
+// ===== pilihan mode: Kurir Plus / Driver Dedicated =====
+['t1','b1','t2','b2'].forEach(id => $(id).dataset.ph = $(id).getAttribute('placeholder'));
+const TEKS = {
+  plus:      { judul:'Kalkulator Insentif Kurir Plus',      tag:'<u>Hitung dulu, senyum belakangan</u> 😎📦', sub:'Cair tiap tanggal 15 ke Dompet Kurir 💳' },
+  dedicated: { judul:'Kalkulator Insentif Kurir Dedicated', tag:'<u>Gas terus, target menanti</u> 🛵💨',       sub:'Insentif/bonus kurir dedicated, cair tiap tanggal 15 🛵💨' },
+  driver:     { judul:'Kalkulator Insentif Driver Dedicated',    tag:'<u>Gas terus, jangan lupa isi bensin</u> ⛽🚗', sub:'Insentif/bonus driver dedicated, cair tiap tanggal 15 🚗💨' }
+};
+function tandaIsi() {
+  $('foldMark').textContent = ['gaji','harian','hari'].some(id => $(id).value) ? '✓ terisi' : '';
+}
+function setMode(m, awal) {
+  if (!awal) simpan();
+  MODE = m;
+  const ded = m !== 'plus';
+  document.body.dataset.mode = m;
+  $('mPlus').setAttribute('aria-pressed', String(m === 'plus'));
+  $('mDed').setAttribute('aria-pressed', String(m === 'dedicated'));
+  $('mDriver').setAttribute('aria-pressed', String(m === 'driver'));
+  $('judul').textContent = TEKS[m].judul;
+  document.title = TEKS[m].judul;
+  $('tagline').innerHTML = TEKS[m].tag;
+  ['t1','b1','t2','b2'].forEach(id => $(id).placeholder = ded ? '' : $(id).dataset.ph);
+  $('lt2').textContent = ded ? 'Target kedua (opsional)' : 'Target kedua (paket)';
+  $('infoTarget').textContent = ded
+    ? 'Isi sesuai skema yang berlaku. Target kedua boleh dikosongkan kalau hanya ada satu tingkat. Insentif/bonus dihitung bertahap: hanya paket di atas target.'
+    : 'Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.';
+  $('subhero').textContent = TEKS[m].sub;
+  $('veh').textContent = m === 'driver' ? '🚗' : '🛵';
+  $('hasilIncar').style.display = 'none';
+  muat();
+  tandaIsi();
+  hitungMundur();
+  $('hasil').classList.remove('show');
+  $('err').style.display = 'none';
+  if (!awal) { try { localStorage.setItem(MODEKEY, m); } catch (e) {} }
 }
 
 // ===== hitung mundur pencairan =====
 function hitungMundur() {
   const now = new Date();
   const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let g = new Date(t0.getFullYear(), t0.getMonth(), 25);
-  if (t0 > g) g = new Date(t0.getFullYear(), t0.getMonth() + 1, 25);
-  const dg = Math.round((g - t0) / 864e5);
+  const selisih = d => Math.round((d - t0) / 864e5);
+  const berikut = tgl => {
+    let d = new Date(t0.getFullYear(), t0.getMonth(), tgl);
+    if (t0 > d) d = new Date(t0.getFullYear(), t0.getMonth() + 1, tgl);
+    return selisih(d);
+  };
+  // gaji: semua mode cair tanggal 25
+  const dg = berikut(25);
   $('cd1').textContent = dg === 0 ? 'Hari ini gaji cair! 🎉🥳' : 'Gaji cair tgl 25: ' + dg + ' hari lagi 🗓️';
-  const di = Math.round((new Date(2026, 11, 15) - t0) / 864e5);
-  $('cd2').textContent = di > 0 ? 'Insentif/bonus cair 15 Des: ' + di + ' hari lagi 🎁'
-                       : di === 0 ? 'Hari ini insentif/bonus cair! 🎉' : 'Insentif/bonus 15 Des 2026 sudah cair ✅';
+  // insentif: semua mode cair tiap tanggal 15
+  const di = berikut(15);
+  $('cd2').textContent = di === 0 ? 'Hari ini insentif/bonus cair! 🎉' : 'Insentif/bonus cair tgl 15: ' + di + ' hari lagi 🎁';
 }
 
 // ===== event =====
 document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
   formatInput(el);
   simpan();
+  tandaIsi();
   // setelah hasil muncul, ubah angka langsung memperbarui hasil
   if ($('hasil').classList.contains('show')) {
     if (!$('total').value) { $('hasil').classList.remove('show'); return; }
@@ -342,14 +590,30 @@ document.querySelectorAll('input').forEach(el => el.addEventListener('input', ()
 
 $('reset').addEventListener('click', () => {
   IDS.forEach(id => $(id).value = '');
-  try { localStorage.removeItem(KEY); } catch (e) {}
+  try { localStorage.removeItem(keyOf(MODE)); } catch (e) {}
+  tandaIsi();
   $('hasil').classList.remove('show');
   $('err').style.display = 'none';
   window.scrollTo({top: 0, behavior: 'smooth'});
 });
 
-muat();
-IDS.forEach(id => { if ($(id).value) formatInput($(id)); });
+$('mPlus').addEventListener('click', () => { if (MODE !== 'plus') setMode('plus'); });
+$('mDed').addEventListener('click', () => { if (MODE !== 'dedicated') setMode('dedicated'); });
+$('mDriver').addEventListener('click', () => { if (MODE !== 'driver') setMode('driver'); });
+$('btnIncar').addEventListener('click', cariIncar);
+$('kartuBtn').addEventListener('click', buatKartu);
+$('kartuShare').addEventListener('click', bagikanKartu);
+$('kartuClose').addEventListener('click', () => { $('kartuBox').hidden = true; });
+$('kartuBox').addEventListener('click', e => { if (e.target === $('kartuBox')) $('kartuBox').hidden = true; });
+$('foldBtn').addEventListener('click', () => {
+  const b = $('foldBody'); b.hidden = !b.hidden;
+  $('foldArrow').textContent = b.hidden ? '▾' : '▴';
+  $('foldBtn').setAttribute('aria-expanded', String(!b.hidden));
+});
+
+let modeAwal = 'plus';
+try { const sm = localStorage.getItem(MODEKEY); if (sm === 'dedicated' || sm === 'driver') modeAwal = sm; } catch (e) {}
+setMode(modeAwal, true);
 hitungMundur();
 </script>
 </body>
