@@ -199,7 +199,6 @@
     <div class="line"><span>Paket target 1</span><b id="p1">0</b></div>
     <div class="line hl"><span>Insentif/bonus target 2</span><b id="r2">Rp0</b></div>
     <div class="line"><span>Paket target 2</span><b id="p2">0</b></div>
-    <div class="line hl"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
 
     <div class="sect">💼 Semua uang masuk</div>
     <div class="line"><span>Insentif/bonus</span><b id="bonus2">Rp0</b></div>
@@ -260,7 +259,6 @@ function hitung() {
   $('vharian').textContent = rp(vharian);
   $('grand').textContent = rp(grand);
   $('perall').textContent = total ? rp(grand / total) : 'Rp0';
-  $('perbonus').textContent = total ? rp(bonus / total) : 'Rp0';
   $('perhari').textContent = hari ? rp(grand / hari) : 'Rp0';
   const perHariPaket = hari ? total / hari : 0;
   $('pakethari').textContent = hari ? perHariPaket.toLocaleString('id-ID', {maximumFractionDigits: 1}) + ' paket' : '0';
