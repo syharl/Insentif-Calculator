@@ -133,8 +133,8 @@
   .mode-btn { font-family:var(--head); font-weight:800; font-size:.82rem; line-height:1.15; padding:10px 3px 8px; color:var(--ink); background:#fff;
     border:3px solid var(--ink); border-radius:var(--wobble); box-shadow:4px 4px 0 var(--ink); cursor:pointer; }
   .mode-btn[aria-pressed="true"] { background:var(--yellow); box-shadow:1px 1px 0 var(--ink); transform:translate(3px,3px); }
-  body[data-mode="plus"] .only-ded { display:none !important; }
-  body:not([data-mode="plus"]) .only-plus { display:none !important; }
+  body:not([data-mode="driver"]) .only-driver { display:none !important; }
+  body[data-mode="driver"] .not-driver { display:none !important; }
   body[data-mode="driver"] .bubble::before { content:"🚗"; transform:none; }
   .fold { display:flex; justify-content:space-between; align-items:center; width:100%; margin:8px 0 0; padding:10px 12px; font-family:var(--head); font-weight:800; font-size:.95rem; color:var(--ink); text-align:left; background:#fffdf3; border:2.5px dashed var(--ink); border-radius:12px; cursor:pointer; }
   .fold .mark { color:#d6410f; font-size:.8rem; margin-left:4px; }
@@ -203,7 +203,7 @@
     <div class="info" id="infoTarget">Insentif/bonus hanya dihitung untuk paket di atas target (bertahap). Dikosongkan juga boleh, nanti pakai angka standar.</div>
   </div>
 
-  <div class="card c-mint only-plus">
+  <div class="card c-mint not-driver">
     <span class="tab">💵 Pendapatan lain</span>
     <span class="corner">🤑</span>
     <button class="fold" id="foldBtn" type="button" aria-expanded="false"><span>Gaji, uang harian &amp; hari kerja <b class="mark" id="foldMark"></b></span><span id="foldArrow">▾</span></button>
@@ -212,9 +212,10 @@
     <div class="money"><span>Rp</span><input id="gaji" type="text" inputmode="numeric" autocomplete="off" placeholder="2.230.000"></div>
     <div class="info">Gaji cair tanggal 25 🗓️</div>
     <div class="row">
-      <div><label for="harian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="text" inputmode="numeric" autocomplete="off" placeholder="20.000"></div></div>
+      <div><label for="harian" id="lharian">Uang harian (per hari)</label><div class="money"><span>Rp</span><input id="harian" type="text" inputmode="numeric" autocomplete="off" placeholder="20.000"></div></div>
       <div><label for="hari">Total hari kerja</label><input id="hari" type="text" inputmode="numeric" autocomplete="off" placeholder="25"></div>
     </div>
+    <div class="info" id="infoHarian"></div>
     </div>
   </div>
 
@@ -245,13 +246,13 @@
     <div class="line"><span>Paket target 1</span><b id="p1">0</b></div>
     <div class="line hl"><span>Insentif/bonus target 2</span><b id="r2">Rp0</b></div>
     <div class="line"><span>Paket target 2</span><b id="p2">0</b></div>
-    <div class="line hl only-ded"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
+    <div class="line hl only-driver"><span>Insentif/bonus per paket</span><b id="perbonus">Rp0</b></div>
 
-    <div class="only-plus">
+    <div class="not-driver">
     <div class="sect">💼 Semua uang masuk</div>
     <div class="line"><span>Insentif/bonus</span><b id="bonus2">Rp0</b></div>
     <div class="line"><span>Gaji (cair tanggal 25)</span><b id="vgaji">Rp0</b></div>
-    <div class="line"><span>Uang harian (hari x harian)</span><b id="vharian">Rp0</b></div>
+    <div class="line"><span id="lvharian">Uang harian (hari x harian)</span><b id="vharian">Rp0</b></div>
     <div class="total">
       <div class="lbl">TOTAL SEMUA UANG MASUK 🤩</div>
       <div class="num" id="grand">Rp0</div>
@@ -525,8 +526,8 @@ function muat() {
 // ===== pilihan mode: Kurir Plus / Driver Dedicated =====
 // angka contoh (abu-abu) per mode; kosong = pakai angka ini. Driver Dedicated belum ada datanya.
 const PH = {
-  plus:      { t1:'955',   b1:'625', t2:'1.215', b2:'900'   },
-  dedicated: { t1:'1.710', b1:'800', t2:'2.705', b2:'1.100' },
+  plus:      { t1:'955',   b1:'625', t2:'1.215', b2:'900',   gaji:'2.230.000', harian:'20.000' },
+  dedicated: { t1:'1.710', b1:'800', t2:'2.705', b2:'1.100', gaji:'2.600.000', harian:'55.000' },
   driver:    {}
 };
 const TEKS = {
@@ -548,7 +549,10 @@ function setMode(m, awal) {
   $('judul').textContent = TEKS[m].judul;
   document.title = TEKS[m].judul;
   $('tagline').innerHTML = TEKS[m].tag;
-  ['t1','b1','t2','b2'].forEach(id => $(id).placeholder = PH[m][id] || '');
+  ['t1','b1','t2','b2','gaji','harian'].forEach(id => $(id).placeholder = PH[m][id] || '');
+  $('lharian').textContent = m === 'dedicated' ? 'Bonus kinerja (per hari)' : 'Uang harian (per hari)';
+  $('lvharian').textContent = m === 'dedicated' ? 'Bonus kinerja (hari x per hari)' : 'Uang harian (hari x harian)';
+  $('infoHarian').textContent = m === 'dedicated' ? 'Bonus kinerja Rp55.000 dianggap full tiap hari (target 68 paket/hari tercapai). Kalau sering di bawah itu, isi rata-rata yang kamu terima.' : '';
   $('lt2').textContent = m === 'driver' ? 'Target kedua (opsional)' : 'Target kedua (paket)';
   $('infoTarget').textContent = m === 'driver'
     ? 'Isi sesuai skema yang berlaku. Target kedua boleh dikosongkan kalau hanya ada satu tingkat. Insentif/bonus dihitung bertahap: hanya paket di atas target.'
